@@ -1,0 +1,14 @@
+
+
+select 
+DBMS_METADATA_DIFF.COMPARE_ALTER(
+'TABLE' --object_type   IN VARCHAR2,
+,'TCASHFLOW'--name1         IN VARCHAR2,
+,'TCASHFLOW_H'--name2         IN VARCHAR2,
+,'ZENITH'--schema1       IN VARCHAR2 DEFAULT NULL,
+,'ZENITH'--schema2       IN VARCHAR2 DEFAULT NULL,
+--network_link1 IN VARCHAR2 DEFAULT NULL,
+--network_link2 IN VARCHAR2 DEFAULT NULL)
+)
+from dual;
+

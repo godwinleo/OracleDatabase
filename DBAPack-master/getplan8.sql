@@ -1,0 +1,10 @@
+DELETE PLAN_TABLE
+WHERE STATEMENT_ID = '&1.'
+/
+
+EXPLAIN PLAN SET STATEMENT_ID='&1.' FOR
+&P_SQL.
+/
+
+@do.expplan8.sql &1.
+

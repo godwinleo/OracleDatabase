@@ -1,0 +1,12 @@
+COLUMN parameter_name FORMAT A30
+COLUMN parameter_value FORMAT A20
+COLUMN audit_trail FORMAT A20
+
+SELECT 
+AUDIT_TRAIL
+,PARAMETER_NAME
+,PARAMETER_VALUE
+FROM   dba_audit_mgmt_config_params
+--WHERE  parameter_name LIKE 'AUDIT FILE MAX%'
+order by AUDIT_TRAIL,PARAMETER_NAME
+/

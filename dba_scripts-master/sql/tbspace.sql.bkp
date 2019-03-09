@@ -1,0 +1,43 @@
+set lines 185
+set pages 200
+col tablespace_name for a25
+col blk_size for a5
+col "%_FREE" for 99.99
+col aloc_mb for 9,999,999,999.99
+col free_mb for 9,999,999,999.99
+col used_mb for 9,999,999,999.99
+col max_mb for 9,999,999,999.99
+col next_ext for 999,999.99
+col MAX_MB_DIFF for 9,999,999,999.99
+select tb.tablespace_name, trunc(free_bytes/aloc_bytes*100,2) "%_FREE"
+,trunc(ALOC_BYTES/1024/1024,2) aloc_mb,trunc(nvl(FREE_BYTES/1024/1024,0),2) free_mb ,trunc(nvl(USED_BYTES/1024/1024,0),2) used_mb
+,block_size/1024||'K' blk_size,extent_management,segment_space_management
+,trunc(nvl(aloc.max_size/1024/1024,0),2) max_MB
+,trunc(nvl((aloc.max_size-ALOC_BYTES)/1024/1024,0),2) max_MB_diff
+from
+(
+        select tablespace_name,sum(bytes) ALOC_BYTES,sum(maxbytes) MAX_size
+        from
+        (
+        select tablespace_name,bytes,maxbytes
+                from dba_data_files
+                where autoextensible='YES'
+        UNION ALL
+        select tablespace_name,bytes,bytes maxbytes
+                from dba_data_files
+                where autoextensible='NO'
+        ) df
+        group by tablespace_name
+) aloc
+, (select tablespace_name,sum(bytes) USED_BYTES , max(next_extent) next_ext
+from dba_segments
+group by tablespace_name) used
+, (select tablespace_name,sum(bytes) FREE_BYTES from dba_free_space
+group by tablespace_name) free
+, dba_tablespaces tb
+where tb.contents='PERMANENT'
+and tb.tablespace_name=aloc.tablespace_name
+and tb.tablespace_name=used.tablespace_name (+)
+and tb.tablespace_name=free.tablespace_name (+)
+order by aloc_mb ,used_mb
+/

@@ -1,0 +1,20 @@
+col first_change# for 99999999999999999
+col next_change# for 99999999999999999
+col dbid for a10
+select 
+GROUP#
+,DBID
+,THREAD#
+,SEQUENCE#
+,BYTES/1024/1024 MB
+,BLOCKSIZE
+,USED
+,ARCHIVED
+,STATUS
+,FIRST_CHANGE#
+,FIRST_TIME
+,NEXT_CHANGE#
+,NEXT_TIME
+,LAST_CHANGE#
+,LAST_TIME
+from v$standby_log;
