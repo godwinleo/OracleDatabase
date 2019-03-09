@@ -1,0 +1,26 @@
+col SERVERNAME for a15
+col DATACENTER for a10
+col DOMAIN for a15
+col STATUS for a10
+col DESCRIPTION for a40 truncated
+select SERVERNAME
+,DATACENTER
+,DOMAIN
+,IP_ADDRESS
+,PLATFORM
+,OS_VERSION
+--,BRAND
+--,MODEL_ID
+--,PROCESSORS
+--,RAM_GBS
+--,NDM_NODE
+,STATUS
+,DESCRIPTION
+--,CPU_TYPE
+--,PCPU
+--,MACHINE_CATEGORY
+--,SYSTEM_TYPE
+--,MACHINE_TYPE
+from dbadmin.servers
+where STATUS='ACTIVE'
+order by servername;
