@@ -1,0 +1,165 @@
+#############################################################################################
+downlaoad the software packages
+#############################################################################################
+
+# 11.2.0.1
+unzip linux.x64_11gR2_database_1of2.zip
+unzip linux.x64_11gR2_database_2of2.zip
+
+#11.2.0.2
+unzip p10098816_112020_Linux-x86-64_1of7.zip
+unzip p10098816_112020_Linux-x86-64_2of7.zip
+
+#11.2.0.3
+unzip p10404530_112030_Linux-x86-64_1of7.zip
+unzip p10404530_112030_Linux-x86-64_2of7.zip
+
+#############################################################################################
+
+unzip the software packages
+
+#############################################################################################
+edit the hosts file
+#############################################################################################
+vi /etc/hosts
+
+The "/etc/hosts" file must contain a fully qualified name for the server.
+
+<IP-address>  <fully-qualified-machine-name>  <machine-name>
+For example.
+
+127.0.0.1       localhost.localdomain  localhost
+192.168.2.181   ol5-11gr2.localdomain  ol5-11gr2
+
+#############################################################################################
+preinstallation checks - automatic setup 
+# yum install oracle-validated
+# yum update
+
+preinstallation checks - manual setup 
+If you have not used the "oracle-validated" package to perform all prerequisites, you will need to manually perform the following setup tasks.
+
+Oracle recommend the following minimum parameter settings.
+
+fs.suid_dumpable = 1
+fs.aio-max-nr = 1048576
+fs.file-max = 6815744
+kernel.shmall = 2097152
+kernel.shmmax = 536870912
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 262144
+net.core.rmem_max = 4194304
+net.core.wmem_default = 262144
+net.core.wmem_max = 1048586
+The current values can be tested using the following command.
+
+/sbin/sysctl -a | grep <param-name>
+Add or amend the following lines in the "/etc/sysctl.conf" file.
+
+fs.suid_dumpable = 1
+fs.aio-max-nr = 1048576
+fs.file-max = 6815744
+kernel.shmall = 2097152
+kernel.shmmax = 536870912
+kernel.shmmni = 4096
+# semaphores: semmsl, semmns, semopm, semmni
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default=262144
+net.core.rmem_max=4194304
+net.core.wmem_default=262144
+net.core.wmem_max=1048586
+Run the following command to change the current kernel parameters.
+
+/sbin/sysctl -p
+Add the following lines to the "/etc/security/limits.conf" file.
+
+oracle              soft    nproc   2047
+oracle              hard    nproc   16384
+oracle              soft    nofile  4096
+oracle              hard    nofile  65536
+oracle              soft    stack   10240
+Install the following packages if they are not already present.
+
+# From Oracle Linux 5 DVD
+cd /media/cdrom/Server
+rpm -Uvh binutils-2.*
+rpm -Uvh compat-libstdc++-33*
+rpm -Uvh compat-libstdc++-33*.i386.rpm
+rpm -Uvh elfutils-libelf*
+rpm -Uvh gcc-4.*
+rpm -Uvh gcc-c++-4.*
+rpm -Uvh glibc-2.*
+rpm -Uvh glibc-common-2.*
+rpm -Uvh glibc-devel-2.*
+rpm -Uvh glibc-headers-2.*
+rpm -Uvh ksh*
+rpm -Uvh libaio-0.*
+rpm -Uvh libaio-devel-0.*
+rpm -Uvh libgomp-4.*
+rpm -Uvh libgcc-4.*
+rpm -Uvh libstdc++-4.*
+rpm -Uvh libstdc++-devel-4.*
+rpm -Uvh make-3.*
+rpm -Uvh sysstat-7.*
+rpm -Uvh unixODBC-2.*
+rpm -Uvh unixODBC-devel-2.*
+rpm -Uvh numactl-devel-*
+cd /
+eject
+#############################################################################################
+create the oracle user
+
+groupadd oinstall
+groupadd dba
+groupadd oper
+groupadd asmadmin
+
+useradd -g oinstall -G dba,oper,asmadmin oracle
+passwd oracle
+
+#############################################################################################
+Additional Setup
+The following setup tasks must be performed regardless of which setup method you used previously.
+
+Set secure Linux to permissive by editing the "/etc/selinux/config" file, making sure the SELINUX flag is set as follows.
+
+SELINUX=permissive
+Alternatively, this alteration can be done using the GUI tool (Applications > System Settings > Security Level). Click on the SELinux tab and disable the feature. If SELinux is disabled after installation, the server will need a reboot for the change to take effect.
+
+If you have the Linux firewall enabled, you will need to disable or configure it, as shown here or here.
+
+Create the directories in which the Oracle software will be installed.
+
+mkdir -p /u01/app/oracle/product/11.2.0/db_1
+chown -R oracle:oinstall /u01
+chmod -R 775 /u01
+Login as root and issue the following command.
+
+xhost +<machine-name>
+Login as the oracle user and add the following lines at the end of the ".bash_profile" file, remembering to adjust them for your specific installation.
+
+# Oracle Settings
+TMP=/tmp; export TMP
+TMPDIR=$TMP; export TMPDIR
+
+ORACLE_HOSTNAME=ol5-112.localdomain; export ORACLE_HOSTNAME
+ORACLE_UNQNAME=DB11G; export ORACLE_UNQNAME
+ORACLE_BASE=/u01/app/oracle; export ORACLE_BASE
+ORACLE_HOME=$ORACLE_BASE/product/11.2.0/db_1; export ORACLE_HOME
+ORACLE_SID=DB11G; export ORACLE_SID
+PATH=/usr/sbin:$PATH; export PATH
+PATH=$ORACLE_HOME/bin:$PATH; export PATH
+
+LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib; export LD_LIBRARY_PATH
+CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib; export CLASSPATH
+Installation
+Log into the oracle user. If you are using X emulation then set the DISPLAY environmental variable.
+
+DISPLAY=<machine-name>:0.0; export DISPLAY
+Start the Oracle Universal Installer (OUI) by issuing the following command in the database directory.
+
+./runInstaller
+#############################################################################################

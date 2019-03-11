@@ -1,0 +1,41 @@
+define tbspace=&1
+set lines 185
+set pages 200
+col file_name for a60
+col ALOC_MB for 999,999,999.99
+col USED_MB for 999,999,999.99
+col MAX_MB for 999,999,999.99
+col NEW_ALOC_MB for 999,999,999.99
+select tb.tablespace_name
+,round(USED_MB/MAX_MB*100,2) "%_USED_AE" 
+,round(USED_MB/ALOC_MB*100,2) "%_USED" 
+,round(nvl(USED_MB,0))  USED_MB
+,round(ALOC_MB)  ALOC_MB
+,round(MAX_MB)  MAX_MB
+,round(USED_MB/(80/100)) NEW_ALOC_MB
+--,round(ALOC_MB-(USED_MB/(80/100),2) INC_MB
+from dba_tablespaces tb
+,	(select tablespace_name, sum(bytes/1024/1024) ALOC_MB, sum(maxbytes/1024/1024) MAX_MB
+	from
+	(
+		select tablespace_name, bytes, maxbytes
+		from dba_data_files
+		where autoextensible='YES'
+	--group by tablespace_name
+	union all
+		select tablespace_name, bytes, bytes maxbytes
+		from dba_data_files
+		where autoextensible='NO'
+	) df_aux
+	where tablespace_name=upper('&tbspace')
+	group by tablespace_name
+) df
+,	(select tablespace_name, sum(bytes/1024/1024) USED_MB
+	from dba_segments
+	where tablespace_name=upper('&tbspace')
+	group by tablespace_name
+) seg
+where tb.tablespace_name=upper('&tbspace')
+and tb.tablespace_name=df.tablespace_name
+and tb.tablespace_name=seg.tablespace_name (+)
+;

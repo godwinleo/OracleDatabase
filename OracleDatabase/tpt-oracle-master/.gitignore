@@ -1,0 +1,25 @@
+# Logs
+*.log
+*.tmp
+logs/*
+tmp/*
+!tmp/.gitkeep 
+!logs/.gitkeep 
+
+# build files
+*.pyc
+
+# OS generated files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# vim tmp files
+**/*~
+*.swp
+*.swo
+

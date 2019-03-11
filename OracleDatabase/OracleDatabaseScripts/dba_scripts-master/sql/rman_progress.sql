@@ -1,0 +1,18 @@
+set lines 180
+col sid for 99999
+col serial# for 999999
+col ELAPSED_TIME for a19 truncated
+col REMAINING_TIME for a19 truncated
+col message for a80 truncated
+
+SELECT SID, SERIAL#, CONTEXT, SOFAR, TOTALWORK,
+       ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE",
+       NUMTODSINTERVAL(ELAPSED_SECONDS,'second') ELAPSED_TIME,NUMTODSINTERVAL(TIME_REMAINING,'second') REMAINING_TIME
+	, message
+FROM V$SESSION_LONGOPS
+WHERE OPNAME LIKE 'RMAN%'
+  --AND OPNAME NOT LIKE '%aggregate%'
+  AND TOTALWORK != 0
+  AND SOFAR <> TOTALWORK
+  order by message,sid
+/

@@ -1,0 +1,11 @@
+col ELAPSED_TIME for a30
+col REMAINING_TIME for a30
+col message for a65
+col "%_COMP" for 99.99
+
+SELECT SID, SERIAL#, message, 
+       trunc(SOFAR/TOTALWORK*100,2) "%_COMP",
+       NUMTODSINTERVAL(ELAPSED_SECONDS,'second') ELAPSED_TIME,NUMTODSINTERVAL(TIME_REMAINING,'second') REMAINING_TIME
+FROM v$datapump_job dpj, V$SESSION_LONGOPS slo
+WHERE dpj.job_name=slo.OPNAME
+/
