@@ -1,0 +1,1 @@
+ (echo > /dev/tcp/se2.remedios.local/1521) >/dev/null 2>&1 && echo "It's up" || echo "It's down"

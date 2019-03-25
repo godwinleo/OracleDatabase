@@ -1,0 +1,35 @@
+set lines 185
+set pages 200
+set feed off
+col NAMESPACE for a15
+col GETS for 999999999
+col GETHITS for 999999999
+--col GETHITRATIO for 9.9999999
+col PINS for 999999999
+col PINHITS for 999999999
+--col PINHITRATIO for 9.9999999
+col RELOADS for 999999
+col INVALIDATIONS for 999999 heading inval
+col DLM_LOCK_REQUESTS for 999999 heading dml_lk_rq
+col DLM_PIN_REQUESTS for 999999 heading dml_pin_rq
+col DLM_PIN_RELEASES for 999999 heading dml_pin_rel
+col DLM_INVALIDATION_REQUESTS  for 999999 heading dml_inv_rq
+col DLM_INVALIDATIONS for 999999 heading dml_inv
+select 
+ NAMESPACE
+,GETS
+,GETHITS
+,GETHITRATIO
+,PINS
+,PINHITS
+,PINHITRATIO
+,RELOADS
+,INVALIDATIONS
+,DLM_LOCK_REQUESTS
+,DLM_PIN_REQUESTS
+,DLM_PIN_RELEASES
+,DLM_INVALIDATION_REQUESTS 
+,DLM_INVALIDATIONS
+from v$librarycache
+order by invalidations,reloads
+;

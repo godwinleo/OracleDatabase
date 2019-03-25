@@ -1,0 +1,82 @@
+PROMPT
+PROMPT ########################################################
+PROMPT
+PROMPT O plano para esta sentenca nao pode ser recuperado
+PROMPT &P_QTCOPIAS. copias na shared pool
+PROMPT Isto pode travar o banco.
+PROMPT
+PROMPT ########################################################
+PROMPT
+
+select
+  hash_value, sum(version_count) versoes,
+  trunc(sum(sharable_mem)/1048576) memoria, sql_text
+from v$sqlarea where version_count > 2
+group by hash_value, sql_text
+order by 2 desc
+
+SET HEAD OFF
+
+PROMPT MOTIVO                               VALOR
+PROMPT -------------------------------- ----------
+
+SELECT
+  'CHILD CNT'                    ISSUE ,COUNT(*)                                                VALOR
+ ,'UNBOUND_CURSOR'               ISSUE ,SUM( DECODE( UNBOUND_CURSOR            , 'Y', 1, 0 ) )  VALOR
+ ,'SQL_TYPE_MISMATCH'            ISSUE ,SUM( DECODE( SQL_TYPE_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'OPTIMIZER_MISMATCH'           ISSUE ,SUM( DECODE( OPTIMIZER_MISMATCH        , 'Y', 1, 0 ) )  VALOR
+ ,'OUTLINE_MISMATCH'             ISSUE ,SUM( DECODE( OUTLINE_MISMATCH          , 'Y', 1, 0 ) )  VALOR
+ ,'STATS_ROW_MISMATCH'           ISSUE ,SUM( DECODE( STATS_ROW_MISMATCH        , 'Y', 1, 0 ) )  VALOR
+ ,'LITERAL_MISMATCH'             ISSUE ,SUM( DECODE( LITERAL_MISMATCH          , 'Y', 1, 0 ) )  VALOR
+ --,'SEC_DEPTH_MISMATCH'           ISSUE ,SUM( DECODE( SEC_DEPTH_MISMATCH        , 'Y', 1, 0 ) )  VALOR
+ ,'EXPLAIN_PLAN_CURSOR'          ISSUE ,SUM( DECODE( EXPLAIN_PLAN_CURSOR       , 'Y', 1, 0 ) )  VALOR
+ ,'BUFFERED_DML_MISMATCH'        ISSUE ,SUM( DECODE( BUFFERED_DML_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'PDML_ENV_MISMATCH'            ISSUE ,SUM( DECODE( PDML_ENV_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'INST_DRTLD_MISMATCH'          ISSUE ,SUM( DECODE( INST_DRTLD_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ ,'SLAVE_QC_MISMATCH'            ISSUE ,SUM( DECODE( SLAVE_QC_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'TYPECHECK_MISMATCH'           ISSUE ,SUM( DECODE( TYPECHECK_MISMATCH        , 'Y', 1, 0 ) )  VALOR
+ ,'AUTH_CHECK_MISMATCH'          ISSUE ,SUM( DECODE( AUTH_CHECK_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ ,'BIND_MISMATCH'                ISSUE ,SUM( DECODE( BIND_MISMATCH             , 'Y', 1, 0 ) )  VALOR
+ ,'DESCRIBE_MISMATCH'            ISSUE ,SUM( DECODE( DESCRIBE_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'LANGUAGE_MISMATCH'            ISSUE ,SUM( DECODE( LANGUAGE_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'TRANSLATION_MISMATCH'         ISSUE ,SUM( DECODE( TRANSLATION_MISMATCH      , 'Y', 1, 0 ) )  VALOR
+ --,'ROW_LEVEL_SEC_MISMATCH'       ISSUE ,SUM( DECODE( ROW_LEVEL_SEC_MISMATCH    , 'Y', 1, 0 ) )  VALOR
+ ,'INSUFF_PRIVS'                 ISSUE ,SUM( DECODE( INSUFF_PRIVS              , 'Y', 1, 0 ) )  VALOR
+ ,'INSUFF_PRIVS_REM'             ISSUE ,SUM( DECODE( INSUFF_PRIVS_REM          , 'Y', 1, 0 ) )  VALOR
+ ,'REMOTE_TRANS_MISMATCH'        ISSUE ,SUM( DECODE( REMOTE_TRANS_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'LOGMINER_SESSION_MISMATCH'    ISSUE ,SUM( DECODE( LOGMINER_SESSION_MISMATCH , 'Y', 1, 0 ) )  VALOR
+ ,'INCOMP_LTRL_MISMATCH'         ISSUE ,SUM( DECODE( INCOMP_LTRL_MISMATCH      , 'Y', 1, 0 ) )  VALOR
+ ,'OVERLAP_TIME_MISMATCH'        ISSUE ,SUM( DECODE( OVERLAP_TIME_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ --,'SQL_REDIRECT_MISMATCH'        ISSUE ,SUM( DECODE( SQL_REDIRECT_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'MV_QUERY_GEN_MISMATCH'        ISSUE ,SUM( DECODE( MV_QUERY_GEN_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'USER_BIND_PEEK_MISMATCH'      ISSUE ,SUM( DECODE( USER_BIND_PEEK_MISMATCH   , 'Y', 1, 0 ) )  VALOR
+ ,'TYPCHK_DEP_MISMATCH'          ISSUE ,SUM( DECODE( TYPCHK_DEP_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ ,'NO_TRIGGER_MISMATCH'          ISSUE ,SUM( DECODE( NO_TRIGGER_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ ,'FLASHBACK_CURSOR'             ISSUE ,SUM( DECODE( FLASHBACK_CURSOR          , 'Y', 1, 0 ) )  VALOR
+ ,'ANYDATA_TRANSFORMATION'       ISSUE ,SUM( DECODE( ANYDATA_TRANSFORMATION    , 'Y', 1, 0 ) )  VALOR
+ --,'INCOMPLETE_CURSOR'            ISSUE ,SUM( DECODE( INCOMPLETE_CURSOR         , 'Y', 1, 0 ) )  VALOR
+ ,'TOP_LEVEL_RPI_CURSOR'         ISSUE ,SUM( DECODE( TOP_LEVEL_RPI_CURSOR      , 'Y', 1, 0 ) )  VALOR
+ ,'DIFFERENT_LONG_LENGTH'        ISSUE ,SUM( DECODE( DIFFERENT_LONG_LENGTH     , 'Y', 1, 0 ) )  VALOR
+ ,'LOGICAL_STANDBY_APPLY'        ISSUE ,SUM( DECODE( LOGICAL_STANDBY_APPLY     , 'Y', 1, 0 ) )  VALOR
+ ,'DIFF_CALL_DURN'               ISSUE ,SUM( DECODE( DIFF_CALL_DURN            , 'Y', 1, 0 ) )  VALOR
+ ,'BIND_UACS_DIFF'               ISSUE ,SUM( DECODE( BIND_UACS_DIFF            , 'Y', 1, 0 ) )  VALOR
+ ,'PLSQL_CMP_SWITCHS_DIFF'       ISSUE ,SUM( DECODE( PLSQL_CMP_SWITCHS_DIFF    , 'Y', 1, 0 ) )  VALOR
+ ,'CURSOR_PARTS_MISMATCH'        ISSUE ,SUM( DECODE( CURSOR_PARTS_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'STB_OBJECT_MISMATCH'          ISSUE ,SUM( DECODE( STB_OBJECT_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ --,'ROW_SHIP_MISMATCH'            ISSUE ,SUM( DECODE( ROW_SHIP_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'PQ_SLAVE_MISMATCH'            ISSUE ,SUM( DECODE( PQ_SLAVE_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'TOP_LEVEL_DDL_MISMATCH'       ISSUE ,SUM( DECODE( TOP_LEVEL_DDL_MISMATCH    , 'Y', 1, 0 ) )  VALOR
+ ,'MULTI_PX_MISMATCH'            ISSUE ,SUM( DECODE( MULTI_PX_MISMATCH         , 'Y', 1, 0 ) )  VALOR
+ ,'BIND_PEEKED_PQ_MISMATCH'      ISSUE ,SUM( DECODE( BIND_PEEKED_PQ_MISMATCH   , 'Y', 1, 0 ) )  VALOR
+ ,'MV_REWRITE_MISMATCH'          ISSUE ,SUM( DECODE( MV_REWRITE_MISMATCH       , 'Y', 1, 0 ) )  VALOR
+ ,'ROLL_INVALID_MISMATCH'        ISSUE ,SUM( DECODE( ROLL_INVALID_MISMATCH     , 'Y', 1, 0 ) )  VALOR
+ ,'OPTIMIZER_MODE_MISMATCH'      ISSUE ,SUM( DECODE( OPTIMIZER_MODE_MISMATCH   , 'Y', 1, 0 ) )  VALOR
+ ,'PX_MISMATCH'                  ISSUE ,SUM( DECODE( PX_MISMATCH               , 'Y', 1, 0 ) )  VALOR
+ ,'MV_STALEOBJ_MISMATCH'         ISSUE ,SUM( DECODE( MV_STALEOBJ_MISMATCH      , 'Y', 1, 0 ) )  VALOR
+FROM V$SQL_SHARED_CURSOR
+WHERE SQL_ID = '&p_sql_id.'
+GROUP BY SQL_ID
+/
+
+SET HEAD ON
+

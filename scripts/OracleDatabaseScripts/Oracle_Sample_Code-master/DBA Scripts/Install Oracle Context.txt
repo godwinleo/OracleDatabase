@@ -1,0 +1,16 @@
+-- Run drdsys.sql to remove peviously installed CTX components
+@?/ctx/admin/dr0dsys
+
+-- Run drcsys.sql with args USERNAME DEFAULT_TABLESPACE TEMPORARY_TABLESPACE
+@?/ctx/admin/dr0csys.sql ctxsys users temp
+
+connect ctxsys/ctxsys
+
+-- Run dr0inst.sql, with arg -  your CTX library (this one is for HP-UX)
+@?/ctx/admin/dr0inst /app/oracle/product/8.1.7-32b/ctx/lib/libctxx8.sl
+
+-- Run drdefXX.sql to install language, XX = {us, uk, ...}
+@?/ctx/admin/defaults/drdefus.sql
+
+-- Grant users access to use CTX
+grant CTXAPP to scott;
