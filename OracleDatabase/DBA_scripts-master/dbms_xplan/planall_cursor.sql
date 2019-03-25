@@ -1,4 +1,0 @@
-SELECT * FROM table (
-   DBMS_XPLAN.DISPLAY_CURSOR('&sql', NULL, 'ALLSTATS ALL'))
-/
-
